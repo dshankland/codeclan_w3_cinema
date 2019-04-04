@@ -50,17 +50,21 @@ class Customer
     return results.map{|film| Film.new(film)}
   end
 
+  def charge_fee(fee)
+    @funds -= fee
+    update()
+  end
+
   # assuming the buy_ticket should be a customer method
   # assuming we take a film as a parameter
   def buys_ticket(film)
     # assumes we're passed a legit film
-    # create a ticket,  with film.id and customer.id
-    ticket = Ticket.new(@id, film.id)
+    # create a ticket, with film.id and customer.id
+    ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
     # save the ticket
     ticket.save()
-
     # call charge_fee (stolen shamelessly from imdb)
-
+    charge_fee(film.price)
   end
 
 end
