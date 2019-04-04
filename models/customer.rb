@@ -1,5 +1,6 @@
 require_relative('../db/sql_runner')
 require_relative('film')
+require_relative('ticket')
 
 class Customer
 
@@ -47,6 +48,19 @@ class Customer
     values = [@id]
     results = SqlRunner.run(sql, values)
     return results.map{|film| Film.new(film)}
+  end
+
+  # assuming the buy_ticket should be a customer method
+  # assuming we take a film as a parameter
+  def buys_ticket(film)
+    # assumes we're passed a legit film
+    # create a ticket,  with film.id and customer.id
+    ticket = Ticket.new(@id, film.id)
+    # save the ticket
+    ticket.save()
+
+    # call charge_fee (stolen shamelessly from imdb)
+
   end
 
 end
