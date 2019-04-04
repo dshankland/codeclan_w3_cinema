@@ -19,4 +19,3 @@ CREATE TABLE tickets (
   customer_id INT REFERENCES customers(id),
   film_id INT REFERENCES films(id)
 );
- 
