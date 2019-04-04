@@ -37,13 +37,13 @@ class Film
   end
 
   def update()
-    sql = "UPDATE film SET (title, price) = ($1, $2) WHERE id = $3"
+    sql = "UPDATE films SET (title, price) = ($1, $2) WHERE id = $3"
     values = [@title, @price, @id]
     SqlRunner.run(sql, values)
   end
 
   def customers()
-    sql = "SELECT customers.* FROM customers INNER JOIN tickets ON customer.id = tickets.customer_id WHERE tickets.film_id = $1"
+    sql = "SELECT customers.* FROM customers INNER JOIN tickets ON customers.id = tickets.customer_id WHERE tickets.film_id = $1"
     values = [@id]
     results = SqlRunner.run(sql, values)
     return results.map{|customer| Customer.new(customer)}
