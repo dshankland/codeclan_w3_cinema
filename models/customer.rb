@@ -55,16 +55,29 @@ class Customer
     update()
   end
 
+  def sufficient_funds(fee)
+    return @funds >= fee ? true : false
+  end
+
   # assuming the buy_ticket should be a customer method
   # assuming we take a film as a parameter
   def buys_ticket(film)
     # assumes we're passed a legit film
-    # create a ticket, with film.id and customer.id
-    ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
-    # save the ticket
-    ticket.save()
-    # call charge_fee (stolen shamelessly from imdb)
-    charge_fee(film.price)
+    # add if  statement for sufficient funds
+    if sufficient_funds(film.price)
+      # create a ticket, with film.id and customer.id
+      ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
+      ticket.save()
+      # call charge_fee (stolen shamelessly from imdb)
+      charge_fee(film.price)
+    end
+  end
+
+  def ticket_count()
+    sql = "SELECT tickets.* FROM tickets WHERE tickets.customer_id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    return results.count
   end
 
 end
