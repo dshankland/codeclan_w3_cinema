@@ -49,4 +49,11 @@ class Film
     return results.map{|customer| Customer.new(customer)}
   end
 
+  def customer_count()
+    sql = "SELECT tickets.* FROM tickets WHERE tickets.film_id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    return results.count
+  end
+
 end
