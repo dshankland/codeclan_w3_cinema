@@ -1,6 +1,7 @@
 require_relative('../db/sql_runner')
 require_relative('film')
 require_relative('ticket')
+require_relative('screening')
 
 class Customer
 
@@ -44,7 +45,8 @@ class Customer
   end
 
   def films()
-    sql = "SELECT films.* FROM films INNER JOIN tickets ON films.id = tickets.film_id WHERE tickets.customer_id = $1"
+    # sql = "SELECT films.* FROM films INNER JOIN tickets ON films.id = tickets.film_id WHERE tickets.customer_id = $1"
+    sql = "SELECT films.* FROM films INNER JOIN screenings ON films.id = screenings.film_id INNER JOIN tickets ON tickets.screening_id = screenings.id WHERE tickets.customer_id = $1"
     values = [@id]
     results = SqlRunner.run(sql, values)
     return results.map{|film| Film.new(film)}
@@ -61,15 +63,26 @@ class Customer
 
   # assuming the buy_ticket should be a customer method
   # assuming we take a film as a parameter
-  def buys_ticket(film)
-    # assumes we're passed a legit film
-    # add if  statement for sufficient funds
-    if sufficient_funds(film.price)
-      # create a ticket, with film.id and customer.id
-      ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
+  # def buys_ticket(film)
+  #   # assumes we're passed a legit film
+  #   # add if  statement for sufficient funds
+  #   if sufficient_funds(film.price)
+  #     # create a ticket, with film.id and customer.id
+  #     ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
+  #     ticket.save()
+  #     # call charge_fee (stolen shamelessly from imdb)
+  #     charge_fee(film.price)
+  #   end
+  # end
+  # re-write of buys_ticket to work on screening instead of film
+  def buys_ticket(screening)
+    # if sufficient_funds(screening.price())
+    if sufficient_funds(screening.price()) && screening.has_availability()
+      ticket = Ticket.new({'customer_id' => @id, 'screening_id' => screening.id})
       ticket.save()
-      # call charge_fee (stolen shamelessly from imdb)
-      charge_fee(film.price)
+      charge_fee(screening.price())
+      screening.increase_customer_count()
+      screening.update()
     end
   end
 
@@ -78,6 +91,13 @@ class Customer
     values = [@id]
     results = SqlRunner.run(sql, values)
     return results.count
+  end
+
+  def screenings()
+    sql = "SELECT screenings.* FROM screenings INNER JOIN tickets ON tickets.screening_id = screenings.id WHERE tickets.customer_id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    return results.map{|screening| Screening.new(screening)}
   end
 
 end

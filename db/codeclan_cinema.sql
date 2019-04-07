@@ -18,11 +18,14 @@ CREATE TABLE films (
 CREATE TABLE screenings (
   id SERIAL PRIMARY KEY,
   film_id INT REFERENCES films(id),
-  showtime VARCHAR
+  showtime VARCHAR,
+  capacity INT,
+  customer_count INT
 );
 
 CREATE TABLE tickets (
   id SERIAL PRIMARY KEY,
   customer_id INT REFERENCES customers(id),
-  film_id INT REFERENCES films(id)
+  -- film_id INT REFERENCES films(id),
+  screening_id INT REFERENCES screenings(id)
 );
