@@ -66,17 +66,26 @@ class Film
     return results.map{|screening| Screening.new(screening)}
   end
 
+  # def most_popular_screening()
+  #   sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1"
+  #   values = [@id]
+  #   results = SqlRunner.run(sql, values)
+  #   screenings = results.map{|screening| Screening.new(screening)}
+  #   most_popular = screenings[0]
+  #   for screening in screenings do
+  #     if screening.customer_count() >  most_popular.customer_count()
+  #       most_popular = screening
+  #     end
+  #   end
+  #   return most_popular
+  # end
+  # re-write of this to use the customer_count property, which is also used for capacity limits
   def most_popular_screening()
-    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1"
+    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1 ORDER BY screenings.customer_count DESC"
     values = [@id]
     results = SqlRunner.run(sql, values)
     screenings = results.map{|screening| Screening.new(screening)}
     most_popular = screenings[0]
-    for screening in screenings do
-      if screening.customer_count() >  most_popular.customer_count()
-        most_popular = screening
-      end
-    end
     return most_popular
   end
 

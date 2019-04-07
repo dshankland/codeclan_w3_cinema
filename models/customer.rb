@@ -76,10 +76,13 @@ class Customer
   # end
   # re-write of buys_ticket to work on screening instead of film
   def buys_ticket(screening)
-    if sufficient_funds(screening.price())
+    # if sufficient_funds(screening.price())
+    if sufficient_funds(screening.price()) && screening.has_availability()
       ticket = Ticket.new({'customer_id' => @id, 'screening_id' => screening.id})
       ticket.save()
       charge_fee(screening.price())
+      screening.increase_customer_count()
+      screening.update()
     end
   end
 
