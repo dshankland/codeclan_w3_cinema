@@ -66,4 +66,18 @@ class Film
     return results.map{|screening| Screening.new(screening)}
   end
 
+  def most_popular_screening()
+    sql = "SELECT screenings.* FROM screenings WHERE screenings.film_id = $1"
+    values = [@id]
+    results = SqlRunner.run(sql, values)
+    screenings = results.map{|screening| Screening.new(screening)}
+    most_popular = screenings[0]
+    for screening in screenings do
+      if screening.customer_count() >  most_popular.customer_count()
+        most_popular = screening
+      end
+    end
+    return most_popular
+  end
+
 end
