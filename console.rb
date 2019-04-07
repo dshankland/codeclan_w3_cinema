@@ -38,12 +38,14 @@ screening5.save()
 screening6 = Screening.new({'film_id' => film3.id, 'showtime' => '14:30'})
 screening6.save()
 
-customer1.buys_ticket(film3)
-customer2.buys_ticket(film1)
-customer3.buys_ticket(film1)
-customer4.buys_ticket(film1)
-customer1.buys_ticket(film1)
+# ticket1 = Ticket.new({'customer_id' => customer1.id, 'screening_id' => screening1.id})
+# ticket1.save()
 
+customer1.buys_ticket(screening1)
+customer2.buys_ticket(screening2)
+customer3.buys_ticket(screening2)
+customer4.buys_ticket(screening5)
+customer1.buys_ticket(screening6)
 
 binding.pry
 nil
